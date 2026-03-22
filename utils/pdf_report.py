@@ -2,7 +2,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
 def generate_pdf(data):
-    doc = SimpleDocTemplate("static/report.pdf")
+    doc = SimpleDocTemplate("/tmp/report.pdf")
     styles = getSampleStyleSheet()
 
     content = []

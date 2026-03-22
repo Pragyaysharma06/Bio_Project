@@ -1,5 +1,8 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
+
 
 def generate_graph_image(disease, gene, proteins, drugs):
     G = nx.Graph()
@@ -22,5 +25,5 @@ def generate_graph_image(disease, gene, proteins, drugs):
     plt.title("Disease → Gene → Protein → Drug")
 
     # save image
-    plt.savefig("static/graph.png")
+    plt.savefig("/tmp/graph.png")
     plt.close()
