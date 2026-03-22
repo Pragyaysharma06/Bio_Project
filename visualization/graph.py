@@ -21,16 +21,15 @@ def generate_graph_image(disease, gene, proteins, drugs):
         G.add_node(drug_name)
         G.add_edge(proteins[0], drug_name)
 
-    plt.figure(figsize=(10,8))
-    pos = nx.spring_layout(G, k=0.8)
+    plt.figure(figsize=(12,9))
+    pos = nx.spring_layout(G, k=1.2, iterations=50)
 
     nx.draw(
     G, pos,
     with_labels=True,
-    node_color='lightblue',
-    node_size=2500,
-    font_size=8,
-    font_weight='bold'
+    node_size=3000,
+    font_size=9,
+    
 )
 
     plt.title("Disease → Gene → Protein → Drug")

@@ -10,11 +10,13 @@
 
     <h1>🧠 AI Rare Disease Drug Discovery</h1>
 
-    <form method="POST" >
+    <form method="POST" onsubmit="showLoader()">
         <input type="text" name="disease" placeholder="Enter disease..." required>
 
-        <!-- 🔥 OPTIONAL SYMPTOMS INPUT -->
-        <input type="text" name="symptoms" placeholder="(Optional) Enter symptoms...">
+        <!-- 🔥 SYMPTOMS (ONLY WHEN NEEDED) -->
+        {% if result and result.message %}
+        <input type="text" name="symptoms" placeholder="Enter symptoms for better suggestions...">
+        {% endif %}
 
         <button type="submit">Search</button>
     </form>
@@ -34,14 +36,10 @@
                 <p><b>Disease:</b> {{ result.disease }}</p>
                 <p><b>Gene:</b> {{ result.gene }}</p>
 
-                <!-- 🔥 MESSAGE IF NO DIRECT DRUG -->
+                <!-- 🔥 MESSAGE -->
                 {% if result.message %}
                     <p style="color:orange;">
                         ⚠ {{ result.message }}
-                    </p>
-
-                    <p style="font-size:14px;">
-                        👉 Try entering symptoms above for better suggestions.
                     </p>
                 {% endif %}
 
@@ -54,10 +52,9 @@
 
                 <p><b>Drug Candidates:</b></p>
                 <p style="font-size:12px; color:gray;">
-                Data based on FDA records
+                    Data based on biomedical sources
                 </p>
 
-                <!-- 🔥 HANDLE EMPTY DRUGS -->
                 {% if result.drugs %}
                     <ul>
                     {% for drug in result.drugs %}
@@ -83,7 +80,7 @@
                     <img src="/static/{{ result.graph }}" width="500">
                 {% endif %}
 
-                <!-- 🔥 PDF DOWNLOAD -->
+                <!-- 🔥 PDF -->
                 {% if result.pdf %}
                     <a href="/static/{{ result.pdf }}" download>
                         <button>Download Report</button>

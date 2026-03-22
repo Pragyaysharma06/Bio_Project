@@ -51,7 +51,7 @@ def index():
                 message = None
 
                 if not drugs:
-                    message = "No direct drug found. Research is ongoing for this disease."
+                    message = "No direct drug found.Try adding symptoms for better insights.."
                     drugs = [
                         {
                             "name": "Supportive Therapy",
