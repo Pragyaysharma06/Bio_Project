@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Drug Discovery</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>🧠 AI Rare Disease Drug Discovery</h1>
+
+    <form method="POST" onsubmit="showLoader()">
+        <input type="text" name="disease" placeholder="Enter disease..." required>
+
+        <!-- 🔥 OPTIONAL SYMPTOMS INPUT -->
+        <input type="text" name="symptoms" placeholder="(Optional) Enter symptoms...">
+
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- 🔥 LOADER -->
+    <div id="loader" style="display:none; margin-top:15px;">
+        <p>🔄 Processing... AI is analyzing data</p>
+    </div>
+
+    {% if result %}
+        {% if result.error %}
+            <p style="color:red;">{{ result.error }}</p>
+        {% else %}
+            <div class="card">
+                <h2>Results</h2>
+
+                <p><b>Disease:</b> {{ result.disease }}</p>
+                <p><b>Gene:</b> {{ result.gene }}</p>
+
+                <!-- 🔥 MESSAGE IF NO DIRECT DRUG -->
+                {% if result.message %}
+                    <p style="color:orange;">
+                        ⚠ {{ result.message }}
+                    </p>
+
+                    <p style="font-size:14px;">
+                        👉 Try entering symptoms above for better suggestions.
+                    </p>
+                {% endif %}
+
+                <p><b>Proteins:</b></p>
+                <ul>
+                    {% for p in result.proteins %}
+                        <li>{{ p }}</li>
+                    {% endfor %}
+                </ul>
+
+                <p><b>Drug Candidates:</b></p>
+
+                <!-- 🔥 HANDLE EMPTY DRUGS -->
+                {% if result.drugs %}
+                    <ul>
+                    {% for drug in result.drugs %}
+                        <li>
+                            <b>{{ drug.name }}</b> (Confidence: {{ drug.score }})
+                            <ul>
+                                {% for reason in drug.reasons %}
+                                    <li style="font-size:13px; color:gray;">
+                                        • {{ reason }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No drug candidates found</p>
+                {% endif %}
+
+                <!-- 🔥 GRAPH -->
+                {% if result.graph %}
+                    <h3>Graph Visualization:</h3>
+                    <img src="/static/{{ result.graph }}" width="500">
+                {% endif %}
+
+                <!-- 🔥 PDF DOWNLOAD -->
+                {% if result.pdf %}
+                    <a href="/static/{{ result.pdf }}" download>
+                        <button>Download Report</button>
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- 🔥 LOADER SCRIPT -->
+    <script>
+    function showLoader() {
+        document.getElementById("loader").style.display = "block";
+    }
+    </script>
+
+</div>
+
+</body>
+</html>

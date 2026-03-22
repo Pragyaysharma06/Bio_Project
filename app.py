@@ -1,0 +1,86 @@
+from flask import Flask, render_template, request, redirect, url_for, session
+from utils.disease_lookup import clean_input
+from api.uniprot_api import get_gene_from_disease, get_proteins
+from api.chembl_api import get_drugs_from_gene
+from visualization.graph import generate_graph_image
+from utils.pdf_report import generate_pdf
+
+app = Flask(__name__)
+app.secret_key = "secret123"
+
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+
+    # 🔥 GET request (page load / refresh)
+    if request.method == "GET":
+        result = session.get("result")
+        return render_template("index.html", result=result)
+
+    # 🔥 POST request (form submit)
+    if request.method == "POST":
+        disease = request.form["disease"]
+        disease = clean_input(disease)
+
+        symptoms = request.form.get("symptoms")
+
+        gene = get_gene_from_disease(disease)
+
+        if gene:
+            proteins = get_proteins(gene)
+            drugs = get_drugs_from_gene(gene, disease, symptoms)
+
+            # 🔥 API fallback (FDA)
+            if not drugs:
+                from api.openfda_api import get_drugs_from_openfda
+                drugs = get_drugs_from_openfda(disease)
+
+            # 🔥 OPTIONAL SYMPTOMS LOGIC
+            if symptoms:
+                print("User symptoms:", symptoms)
+                drugs.append({
+                    "name": "Symptom-based Suggestion",
+                    "score": 0.65,
+                    "reasons": [f"Based on user symptoms: {symptoms}"]
+                })
+
+            # 🔥 SMART MESSAGE
+            message = None
+
+            if not drugs:
+                message = "No direct drug found. Research is ongoing for this disease."
+                drugs = [
+                    {
+                        "name": "Supportive Therapy",
+                        "score": 0.6,
+                        "reasons": ["General supportive care"]
+                    }
+                ]
+
+            # 🔥 GRAPH
+            generate_graph_image(disease, gene, proteins, drugs)
+
+            # 🔥 RESULT
+            result = {
+                "disease": disease,
+                "gene": gene,
+                "proteins": proteins[:3],
+                "drugs": drugs,
+                "message": message,
+                "pdf": "report.pdf",
+                "graph": "graph.png"
+            }
+
+            # 🔥 PDF
+            generate_pdf(result)
+
+        else:
+            result = {"error": "Disease not found"}
+
+        # 🔥 PRG PATTERN (IMPORTANT)
+        session["result"] = result
+        return redirect(url_for("index"))
+
+
+if __name__ == "__main__":
+    app.run()
