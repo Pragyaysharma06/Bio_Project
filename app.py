@@ -4,6 +4,8 @@ from api.uniprot_api import get_gene_from_disease, get_proteins
 from api.chembl_api import get_drugs_from_gene
 from visualization.graph import generate_graph_image
 from utils.pdf_report import generate_pdf
+import os
+
 
 app = Flask(__name__)
 app.secret_key = "secret123"
@@ -83,4 +85,5 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
