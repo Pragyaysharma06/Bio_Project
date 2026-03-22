@@ -77,12 +77,12 @@
                 <!-- 🔥 GRAPH -->
                 {% if result.graph %}
                     <h3>Graph Visualization:</h3>
-                    <img src="{{ result.graph }}" width="500">
+                    <img src="/static/{{ result.graph }}" width="500">
                 {% endif %}
 
                 <!-- 🔥 PDF DOWNLOAD -->
                 {% if result.pdf %}
-                    <a href="{{ result.pdf }}" download>
+                    <a href="/static/{{ result.pdf }}" download>
                         <button>Download Report</button>
                     </a>
                 {% endif %}
