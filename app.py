@@ -16,7 +16,7 @@ def index():
 
     # 🔥 GET request
     if request.method == "GET":
-        result = session.get("result", None)
+        result = session.pop("result", None)
         return render_template("index.html", result=result)
 
     # 🔥 POST request
