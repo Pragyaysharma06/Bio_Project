@@ -21,7 +21,7 @@ def get_drugs_from_openfda(disease):
                 name = item.get("openfda", {}).get("generic_name", ["Unknown"])[0]
 
 # ❌ skip unknown completely
-            if name == "Unknown":
+            if not name or name == "Unknown":
                 continue
 
             drugs.append({
